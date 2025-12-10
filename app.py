@@ -4,15 +4,40 @@ Flask web application for Climate Experiment Explorer
 
 from flask import Flask, render_template, jsonify, request
 import json
+import os
+import sys
 
 app = Flask(__name__)
 
-# Load experiments on startup
-with open('climate_experiments.json', 'r') as f:
-    EXPERIMENTS = json.load(f)
+# Auto-generate experiments if they don't exist
+def ensure_experiments_exist():
+    """Generate experiments if JSON files don't exist"""
+    if not os.path.exists('climate_experiments.json'):
+        print("Generating experiments (first run)...")
+        # Import and run the generator
+        sys.path.insert(0, os.path.dirname(__file__))
+        from climate_experiment_generator import ClimateExperimentGenerator
+        
+        generator = ClimateExperimentGenerator()
+        experiments = generator.generate_experiments(500)
+        generator.save_experiments(experiments, 'climate_experiments.json')
+        
+        summary = generator.generate_summary_report(experiments)
+        with open('experiment_summary.json', 'w') as f:
+            json.dump(summary, f, indent=2)
+        
+        print("✓ Experiments generated successfully!")
+        return experiments, summary
+    else:
+        # Load existing experiments
+        with open('climate_experiments.json', 'r') as f:
+            experiments = json.load(f)
+        with open('experiment_summary.json', 'r') as f:
+            summary = json.load(f)
+        return experiments, summary
 
-with open('experiment_summary.json', 'r') as f:
-    SUMMARY = json.load(f)
+# Load or generate experiments on startup
+EXPERIMENTS, SUMMARY = ensure_experiments_exist()
 
 @app.route('/')
 def index():
@@ -73,7 +98,18 @@ if __name__ == '__main__':
     print("Climate Experiment Explorer")
     print("="*60)
     print("\nStarting web server...")
-    print("Open your browser to: http://localhost:5000")
-    print("\nPress CTRL+C to stop the server")
-    print("="*60 + "\n")
-    app.run(debug=True, port=5000)
+    
+    # Get port from environment variable (for deployment) or use 5000
+    port = int(os.environ.get('PORT', 5000))
+    
+    # Check if running in production
+    is_production = os.environ.get('RENDER') or os.environ.get('HEROKU')
+    
+    if is_production:
+        print(f"Running in production mode on port {port}")
+        app.run(debug=False, host='0.0.0.0', port=port)
+    else:
+        print("Open your browser to: http://localhost:5000")
+        print("\nPress CTRL+C to stop the server")
+        print("="*60 + "\n")
+        app.run(debug=True, host='0.0.0.0', port=port)
