@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climate Experiment Explorer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 Hyperlocal Climate Intelligence</h1>
+            <p class="subtitle">Experiment Scenario Explorer</p>
+        </header>
+
+        <!-- Summary Dashboard -->
+        <div class="dashboard">
+            <div class="stat-card">
+                <div class="stat-value" id="total-experiments">500</div>
+                <div class="stat-label">Total Experiments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avg-roi">3.28x</div>
+                <div class="stat-label">Average ROI</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-cost">₦489.7M</div>
+                <div class="stat-label">Total Investment</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="high-priority">164</div>
+                <div class="stat-label">High Priority</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <h2>🔍 Filter Experiments</h2>
+            <div class="filter-grid">
+                <select id="segment-filter" class="filter-select">
+                    <option value="">All Segments</option>
+                </select>
+                <select id="region-filter" class="filter-select">
+                    <option value="">All Regions</option>
+                </select>
+                <select id="event-filter" class="filter-select">
+                    <option value="">All Events</option>
+                </select>
+                <select id="channel-filter" class="filter-select">
+                    <option value="">All Channels</option>
+                </select>
+                <select id="priority-filter" class="filter-select">
+                    <option value="">All Priorities</option>
+                </select>
+                <select id="sort-filter" class="filter-select">
+                    <option value="expected_roi">Sort by ROI</option>
+                    <option value="cost_estimate_ngn">Sort by Cost</option>
+                    <option value="sample_size">Sort by Sample Size</option>
+                </select>
+            </div>
+            <button id="reset-filters" class="btn-secondary">Reset Filters</button>
+        </div>
+
+        <!-- Results -->
+        <div class="results">
+            <div class="results-header">
+                <h2>📊 Experiments</h2>
+                <span id="results-count" class="results-count">Showing 500 experiments</span>
+            </div>
+            <div id="experiments-list" class="experiments-list">
+                <!-- Experiments will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Modal for experiment details -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

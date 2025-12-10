@@ -1,0 +1,3 @@
+# No external dependencies required for CLI tools
+# For web frontend:
+Flask==3.0.0
